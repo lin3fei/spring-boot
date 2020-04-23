@@ -7,8 +7,8 @@ import tk.mybatis.spring.annotation.MapperScan;
 @MapperScan(basePackages = {"org.eleven.dao"})
 public class SpringBootApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SpringBootApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SpringBootApplication.class, args);
+    }
 
 }

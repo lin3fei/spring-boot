@@ -19,14 +19,21 @@ spring:
         enabled: true
         url-pattern: /druid/*
         reset-enable: true
+  redis:
+    lettuce:      pool:        max-active: 8
+        max-idle: 8
+        max-wait: -1ms
+        min-idle: 3    password: 123456
+    sentinel:      master: mymaster
+      nodes:      - 192.168.104.29:26379
+      - 192.168.104.29:26380
+      - 192.168.104.29:26381
 
 mybatis:  mapper-locations:  - classpath:mapper/*.xml
   type-aliases-package: org.eleven.model
-  type-handlers-package: org.eleven.handler
 
 mapper:  mappers:  - org.eleven.util.MyMapper
-  not-empty: false
-  identity: MYSQL
+  identity: mysql
 
 pagehelper:
   helper-dialect: mysql

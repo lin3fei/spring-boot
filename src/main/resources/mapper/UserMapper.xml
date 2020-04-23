@@ -1,13 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.eleven.mapper.UserMapper">
+<mapper namespace="org.eleven.dao.UserMapper">
 
-    <resultMap id="BaseResultMap" type="User">
+    <resultMap id="UserResultMap" type="User">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="username" jdbcType="VARCHAR" property="username"/>
         <result column="password" jdbcType="VARCHAR" property="password"/>
         <result column="nickname" jdbcType="VARCHAR" property="nickname"/>
         <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="phone_no" jdbcType="VARCHAR" property="phoneNo"/>
+        <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
+        <result column="sex" jdbcType="INTEGER" property="sex"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="dept_id" jdbcType="INTEGER" property="deptId"/>
+        <result column="job_id" jdbcType="INTEGER" property="jobId"/>
+        <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime"/>
+        <result column="last_login_ip" jdbcType="VARCHAR" property="lastLoginIp"/>
+        <result column="login_error_times" jdbcType="INTEGER" property="loginErrorTimes"/>
     </resultMap>
 
+    <select id="listUsers" parameterType="User" resultMap="UserResultMap">
+        select * from user
+        <where>
+            <if test="username!=null">
+                and username = #{username,jdbcType=VARCHAR}
+            </if>
+            <if test="email!=null">
+                and email = #{email,jdbcType=VARCHAR}
+            </if>
+            <if test="nickname!=null">
+                and nickname like concat('%',#{nickname,jdbcType=VARCHAR},'%')
+            </if>
+        </where>
+    </select>
 </mapper>

@@ -11,7 +11,7 @@
     </parent>
     <groupId>org.eleven</groupId>
     <artifactId>spring-boot</artifactId>
-    <version>1.0.1.20200421</version>
+    <version>1.0.2.20200423</version>
     <name>spring-boot</name>
     <description>Project For Spring Boot</description>
 
@@ -47,6 +47,14 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
