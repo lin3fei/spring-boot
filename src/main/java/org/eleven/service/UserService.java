@@ -1,21 +1,24 @@
 package org.eleven.service;
 
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.wf.captcha.ArithmeticCaptcha;
 import org.eleven.constant.ErrorCode;
 import org.eleven.dao.UserMapper;
 import org.eleven.exception.MyException;
 import org.eleven.model.User;
+import org.eleven.util.MyUtils;
 import org.eleven.util.RedisUtil;
 import org.eleven.vo.AuthUser;
+import org.eleven.vo.CodeVO;
 import org.eleven.vo.LoginVO;
 import org.eleven.vo.MyPage;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class UserService {
@@ -24,7 +27,10 @@ public class UserService {
     private UserMapper userMapper;
 
     @Autowired
-    private RedisUtil<AuthUser> redisUtil;
+    private RedisUtil<AuthUser> redisAuthUser;
+
+    @Autowired
+    private RedisUtil<String> redisString;
 
     public int saveUser(User user) {
         return userMapper.insertSelective(user);
@@ -50,7 +56,34 @@ public class UserService {
         return myPage;
     }
 
+    public CodeVO getCode() {
+        // 算术类型 https://gitee.com/whvse/EasyCaptcha
+        ArithmeticCaptcha captcha = new ArithmeticCaptcha(111, 36);
+        // 几位数运算，默认是两位
+        captcha.setLen(2);
+        // 获取运算的结果
+        String result = captcha.text();
+        String uuid = MyUtils.uuid();
+        // 保存
+        redisString.set(uuid, result, 2L, TimeUnit.MINUTES);
+        // 验证码信息
+        CodeVO code = new CodeVO();
+        code.setUuid(uuid);
+        code.setImg(captcha.toBase64());
+        return code;
+    }
+
     public AuthUser login(LoginVO loginVO) {
+        // 查询验证码
+        String code = redisString.get(loginVO.getUuid());
+        // 清除验证码
+        redisString.delete(loginVO.getUuid());
+        if (!StringUtils.hasText(code)) {
+            throw new MyException(ErrorCode.CODE_EXPIRE_ERROR);
+        }
+        if (MyUtils.isNullData(code) || !code.equalsIgnoreCase(loginVO.getCode())) {
+            throw new MyException(ErrorCode.CODE_ERROR);
+        }
         User user = new User();
         user.setUsername(loginVO.getUsername());
         user.setPassword(loginVO.getPassword());
@@ -60,9 +93,9 @@ public class UserService {
         }
         AuthUser authUser = new AuthUser();
         BeanUtils.copyProperties(user, authUser);
-        String token = UUID.randomUUID().toString();
+        String token = MyUtils.uuid();
         authUser.setToken(token);
-        redisUtil.set(token, authUser, 1L, TimeUnit.DAYS);
+        redisAuthUser.set(token, authUser, 1L, TimeUnit.DAYS);
         return authUser;
     }
 

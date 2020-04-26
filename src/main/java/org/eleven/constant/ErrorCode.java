@@ -14,6 +14,8 @@ public enum ErrorCode {
     LOGIN_PASS_ERROR(4101001, "登录失败，用户名或密码错误"),
     LOGIN_PARAM_ERROR(4101002, "用户名或密码不能为空"),
     OLD_PASSWORD_ERROR(4101003, "旧密码错误"),
+    CODE_EXPIRE_ERROR(4101004, "验证码过期"),
+    CODE_ERROR(4101005, "验证码错误"),
 
     USERNAME_OR_EMAIL_EXIST(4102001, "用户名或邮箱已存在"),
     PARAM_EMAIL_NULL(4102002, "邮箱地址不能为空"),
