@@ -7,7 +7,6 @@ import com.github.pagehelper.PageInfo;
 import com.wf.captcha.ArithmeticCaptcha;
 import org.eleven.constant.ErrorCode;
 import org.eleven.dao.UserMapper;
-import org.eleven.exception.MyException;
 import org.eleven.model.User;
 import org.eleven.util.MyUtils;
 import org.eleven.util.RedisUtil;
@@ -18,7 +17,6 @@ import org.eleven.vo.MyPage;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 @Service
 public class UserService {
@@ -78,19 +76,14 @@ public class UserService {
         String code = redisString.get(loginVO.getUuid());
         // 清除验证码
         redisString.delete(loginVO.getUuid());
-        if (!StringUtils.hasText(code)) {
-            throw new MyException(ErrorCode.CODE_EXPIRE_ERROR);
-        }
-        if (MyUtils.isNullData(code) || !code.equalsIgnoreCase(loginVO.getCode())) {
-            throw new MyException(ErrorCode.CODE_ERROR);
-        }
+        ErrorCode.CODE_EXPIRE_ERROR.hasLength(code);
+        ErrorCode.CODE_ERROR.equals(code, loginVO.getCode());
         User user = new User();
         user.setUsername(loginVO.getUsername());
         user.setPassword(loginVO.getPassword());
         user = userMapper.selectOne(user);
-        if (user == null) {
-            throw new MyException(ErrorCode.LOGIN_PASS_ERROR);
-        }
+        ErrorCode.LOGIN_PASS_ERROR.notNull(user);
+
         AuthUser authUser = new AuthUser();
         BeanUtils.copyProperties(user, authUser);
         String token = MyUtils.uuid();

@@ -45,8 +45,7 @@ public class UserController {
     @Authorization
     public MyResponse<?> getUser(@PathVariable Integer id, @CurrentUser AuthUser authUser) {
         log.info(MyUtils.toJSONString(authUser));
-        User user = userService.getUser(id);
-        return MyResponse.ok(user);
+        return MyResponse.ok(userService.getUser(id));
     }
 
     @GetMapping

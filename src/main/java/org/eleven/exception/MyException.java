@@ -18,4 +18,9 @@ public class MyException extends RuntimeException {
         this.message = errorCode.getMessage();
     }
 
+    public MyException(IErrorCode responseEnum) {
+        this.code = responseEnum.getCode();
+        this.message = responseEnum.getMessage();
+    }
+
 }
