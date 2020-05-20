@@ -74,9 +74,9 @@ public class UserService {
     public AuthUser login(LoginVO loginVO) {
         // 查询验证码
         String code = redisString.get(loginVO.getUuid());
+        ErrorCode.CODE_EXPIRE_ERROR.hasLength(code);
         // 清除验证码
         redisString.delete(loginVO.getUuid());
-        ErrorCode.CODE_EXPIRE_ERROR.hasLength(code);
         ErrorCode.CODE_ERROR.equals(code, loginVO.getCode());
         User user = new User();
         user.setUsername(loginVO.getUsername());

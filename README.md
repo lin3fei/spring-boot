@@ -1,5 +1,9 @@
 # spring-boot
 
+## 1.0.5.2020520
+- 设置启动banner
+- 更新spring-boot-starter-parent
+
 ## 1.0.4.20200507
 - 升级至jdk11
 - 优化通用异常处理

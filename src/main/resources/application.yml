@@ -23,11 +23,11 @@ spring:
     lettuce:      pool:        max-active: 8
         max-idle: 8
         max-wait: -1ms
-        min-idle: 3    password: 123456
+        min-idle: 3    password: P@ss2020
     sentinel:      master: mymaster
-      nodes:      - 192.168.104.38:26379
-      - 192.168.104.38:26380
-      - 192.168.104.38:26381
+      nodes:      - 192.168.104.42:27777
+      - 192.168.104.42:27778
+      - 192.168.104.42:27779
 # 404抛异常
 #  mvc:#    throw-exception-if-no-handler-found: true
 #  resources:#    add-mappings: false
