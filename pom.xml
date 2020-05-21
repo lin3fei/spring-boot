@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.eleven</groupId>
     <artifactId>spring-boot</artifactId>
-    <version>1.0.5.20200520</version>
+    <version>1.0.6.20200521</version>
     <name>spring-boot</name>
     <description>Project For Spring Boot</description>
 

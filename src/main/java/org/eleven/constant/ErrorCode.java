@@ -2,11 +2,11 @@ package org.eleven.constant;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.eleven.exception.BussinessExceptionAssert;
+import org.eleven.exception.Assert;
 
 @Getter
 @AllArgsConstructor
-public enum ErrorCode implements BussinessExceptionAssert {
+public enum ErrorCode implements Assert {
 
     SUCCESS(0, "请求成功"),
     AUTHORIZE_EXPIRE(4011001, "令牌失效，请重新登录"),

@@ -1,5 +1,8 @@
 # spring-boot
 
+## 1.0.6.20200521
+- 优化干掉try-catch代码
+
 ## 1.0.5.2020520
 - 设置启动banner
 - 更新spring-boot-starter-parent
