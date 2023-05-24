@@ -1,66 +1,66 @@
 package org.eleven.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.eleven.auth.Authorization;
-import org.eleven.auth.CurrentUser;
+import org.eleven.config.Authorize;
+import org.eleven.config.CurrentUser;
 import org.eleven.model.User;
+import org.eleven.model.dto.LoginDTO;
+import org.eleven.model.vo.AuthUser;
+import org.eleven.model.vo.MyResult;
 import org.eleven.service.UserService;
-import org.eleven.util.MyUtils;
-import org.eleven.vo.AuthUser;
-import org.eleven.vo.LoginVO;
-import org.eleven.vo.MyResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.eleven.util.MyUtil;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("v1/user")
 @Slf4j
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @PostMapping
-    @Authorization
-    public MyResponse<?> saveUser(@RequestBody User user) {
+    @Authorize
+    public MyResult<?> saveUser(@RequestBody User user) {
         userService.saveUser(user);
-        return MyResponse.ok(user.getId());
+        return MyResult.ok(user.getUserId());
     }
 
     @DeleteMapping("/{id}")
-    @Authorization
-    public MyResponse<?> removeUser(@PathVariable Integer id) {
+    @Authorize
+    public MyResult<?> removeUser(@PathVariable Integer id) {
         userService.removeUser(id);
-        return MyResponse.ok();
+        return MyResult.ok();
     }
 
     @PutMapping
-    @Authorization
-    public MyResponse<?> updateUser(@RequestBody User user) {
+    @Authorize
+    public MyResult<?> updateUser(@RequestBody User user) {
         userService.updateUser(user);
-        return MyResponse.ok();
+        return MyResult.ok();
     }
 
     @GetMapping("/{id}")
-    @Authorization
-    public MyResponse<?> getUser(@PathVariable Integer id, @CurrentUser AuthUser authUser) {
-        log.info(MyUtils.toJSONString(authUser));
-        return MyResponse.ok(userService.getUser(id));
+    @Authorize
+    public MyResult<?> getUser(@PathVariable Integer id, @CurrentUser AuthUser authUser) {
+        log.info(MyUtil.toJSONString(authUser));
+        return MyResult.ok(userService.getUser(id));
     }
 
     @GetMapping
-    @Authorization
-    public MyResponse<?> findUser(User user) {
-        return MyResponse.ok(userService.findUser(user));
+    @Authorize
+    public MyResult<?> findUser(User user) {
+        return MyResult.ok(userService.findUser(user));
     }
 
     @GetMapping("code")
-    public MyResponse<?> getCode() {
-        return MyResponse.ok(userService.getCode());
+    public MyResult<?> getCode() {
+        return MyResult.ok(userService.getCode());
     }
 
     @PostMapping("login")
-    public MyResponse<?> login(@RequestBody LoginVO loginVO) {
-        return MyResponse.ok(userService.login(loginVO));
+    public MyResult<?> login(@RequestBody LoginDTO loginVO) {
+        return MyResult.ok(userService.login(loginVO));
     }
 }

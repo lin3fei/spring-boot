@@ -1,5 +1,10 @@
 # spring-boot
 
+## 2.0.0.20230524
+- jdk版本降为8
+- 移除通用mapper
+- 集成mybatisplus
+
 ## 1.0.6.20200521
 - 优化干掉try-catch代码
 

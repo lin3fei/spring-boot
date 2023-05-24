@@ -1,57 +1,56 @@
 package org.eleven.service;
 
-import java.util.concurrent.TimeUnit;
-
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.wf.captcha.ArithmeticCaptcha;
+import lombok.RequiredArgsConstructor;
 import org.eleven.constant.ErrorCode;
-import org.eleven.dao.UserMapper;
+import org.eleven.mapper.UserMapper;
+import org.eleven.mapper.biz.UserBiz;
 import org.eleven.model.User;
-import org.eleven.util.MyUtils;
+import org.eleven.model.dto.LoginDTO;
+import org.eleven.model.vo.AuthUser;
+import org.eleven.model.vo.CodeVO;
+import org.eleven.model.vo.MyPage;
+import org.eleven.util.MyUtil;
 import org.eleven.util.RedisUtil;
-import org.eleven.vo.AuthUser;
-import org.eleven.vo.CodeVO;
-import org.eleven.vo.LoginVO;
-import org.eleven.vo.MyPage;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.TimeUnit;
+
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserBiz userBiz;
 
-    @Autowired
-    private RedisUtil<AuthUser> redisAuthUser;
+    private final UserMapper userMapper;
 
-    @Autowired
-    private RedisUtil<String> redisString;
+    private final RedisUtil<AuthUser> redisAuthUser;
+
+    private final RedisUtil<String> redisString;
 
     public int saveUser(User user) {
-        return userMapper.insertSelective(user);
+        return userMapper.insert(user);
     }
 
     public int removeUser(Integer id) {
-        return userMapper.deleteByPrimaryKey(id);
+        return userMapper.deleteById(id);
     }
 
     public int updateUser(User user) {
-        return userMapper.updateByPrimaryKeySelective(user);
+        return userMapper.updateById(user);
     }
 
     public User getUser(Integer id) {
-        return userMapper.selectByPrimaryKey(id);
+        return userMapper.selectById(id);
     }
 
     public MyPage<User> findUser(User user) {
-        PageInfo<User> pageInfo = PageHelper.startPage(user.getPageNum(), user.getPageSize())
-                .doSelectPageInfo(() -> userMapper.select(user));
-        MyPage<User> myPage = new MyPage<>();
-        BeanUtils.copyProperties(pageInfo, myPage);
-        return myPage;
+        Page<User> page = PageHelper.startPage(1, 10)
+                .doSelectPage(() -> userBiz.selectList(user.getNickname(), user.getDeptId()));
+        return MyPage.build(page);
     }
 
     public CodeVO getCode() {
@@ -61,7 +60,7 @@ public class UserService {
         captcha.setLen(2);
         // 获取运算的结果
         String result = captcha.text();
-        String uuid = MyUtils.uuid();
+        String uuid = MyUtil.uuid();
         // 保存
         redisString.set(uuid, result, 2L, TimeUnit.MINUTES);
         // 验证码信息
@@ -71,22 +70,19 @@ public class UserService {
         return code;
     }
 
-    public AuthUser login(LoginVO loginVO) {
+    public AuthUser login(LoginDTO loginDTO) {
         // 查询验证码
-        String code = redisString.get(loginVO.getUuid());
-        ErrorCode.CODE_EXPIRE_ERROR.hasText(code);
+        // String code = redisString.get(loginDTO.getUuid());
+        // ErrorCode.CODE_EXPIRE_ERROR.hasText(code);
         // 清除验证码
-        redisString.delete(loginVO.getUuid());
-        ErrorCode.CODE_ERROR.equals(code, loginVO.getCode());
-        User user = new User();
-        user.setUsername(loginVO.getUsername());
-        user.setPassword(loginVO.getPassword());
-        user = userMapper.selectOne(user);
+        // redisString.delete(loginDTO.getUuid());
+        // ErrorCode.CODE_ERROR.equals(code, loginDTO.getCode());
+        User user = userBiz.getByUsernameAndPassword(loginDTO.getUsername(), loginDTO.getPassword());
         ErrorCode.LOGIN_PASS_ERROR.notNull(user);
 
         AuthUser authUser = new AuthUser();
         BeanUtils.copyProperties(user, authUser);
-        String token = MyUtils.uuid();
+        String token = MyUtil.uuid();
         authUser.setToken(token);
         redisAuthUser.set(token, authUser, 1L, TimeUnit.DAYS);
         return authUser;

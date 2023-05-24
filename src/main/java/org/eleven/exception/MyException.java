@@ -1,10 +1,12 @@
 package org.eleven.exception;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.eleven.constant.ErrorCode;
 
-@Data
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = false)
 public class MyException extends RuntimeException {
 

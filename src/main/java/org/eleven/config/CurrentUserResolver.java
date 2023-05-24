@@ -1,10 +1,10 @@
-package org.eleven.auth;
+package org.eleven.config;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eleven.constant.Constants;
+import org.eleven.model.vo.AuthUser;
 import org.eleven.util.RedisUtil;
-import org.eleven.vo.AuthUser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -14,10 +14,10 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CurrentUserResolver implements HandlerMethodArgumentResolver {
 
-    @Autowired
-    private RedisUtil<AuthUser> redisUtil;
+    private final RedisUtil<AuthUser> redisUtil;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -26,7 +26,7 @@ public class CurrentUserResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-            NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
+                                  NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         String token = webRequest.getHeader(Constants.TOKEN);
         if (token != null) {
             log.info("请求的token为:{}", token);

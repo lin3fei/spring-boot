@@ -1,11 +1,11 @@
-package org.eleven.auth;
+package org.eleven.config;
 
 import java.lang.annotation.*;
 
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Authorization {
+public @interface Authorize {
 
     String[] value() default {};
 

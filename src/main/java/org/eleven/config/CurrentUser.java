@@ -1,4 +1,4 @@
-package org.eleven.auth;
+package org.eleven.config;
 
 import java.lang.annotation.*;
 

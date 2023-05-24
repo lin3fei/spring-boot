@@ -1,10 +1,10 @@
 package org.eleven;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
-import tk.mybatis.spring.annotation.MapperScan;
 
 @org.springframework.boot.autoconfigure.SpringBootApplication
-@MapperScan(basePackages = {"org.eleven.dao"})
+@MapperScan(basePackages = {"org.eleven.mapper"})
 public class SpringBootApplication {
 
     public static void main(String[] args) {
